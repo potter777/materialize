@@ -1,21 +1,11 @@
 (function($, Vel) {
   'use strict';
 
-  let _defaults = {
-    displayLength: Infinity,
-    inDuration: 300,
-    outDuration: 375,
-    className: undefined,
-    completeCallback: undefined,
-    activationPercent: 0.8
-  };
-
   class Toast {
     constructor(message, displayLength, className, completeCallback) {
       if (!message) {
         return;
       }
-
 
       /**
        * Options for the toast
@@ -27,7 +17,7 @@
         completeCallback: completeCallback
       };
 
-      this.options = $.extend({}, Toast.defaults, this.options);
+      this.options = Toast.join(Toast.defaults, this.options);
       this.message = message;
 
       /**
@@ -54,8 +44,29 @@
       this.setTimer();
     }
 
-    static get defaults() {
-      return _defaults;
+    static get defaults() = {
+      // always return a new object
+      return {
+        displayLength: Infinity,
+        inDuration: 300,
+        outDuration: 375,
+        className: undefined,
+        completeCallback: undefined,
+        activationPercent: 0.8
+      };
+    }
+
+    /**
+    * join two object
+    * @param {Object} l1 - object 1
+    * @param {Object} l2 - object 2
+    * @return list 1 with the attributes of l2
+    */
+    static join(l1, l2){
+      for (let key in l2){
+        l1[key] = l2[key];
+      }
+      return l1;
     }
 
     /**
@@ -101,7 +112,7 @@
         toast.panning = true;
         Toast._draggedToast = toast;
         toast.el.classList.add('panning');
-        toast.el.style.transition = null;
+        toast.el.style.transition = '';
         toast.startingXPos = Toast._xPos(e);
         toast.time = Date.now();
         toast.xPos = Toast._xPos(e);
@@ -153,8 +164,8 @@
         // Animate toast back to original position
         } else {
           toast.el.style.transition = 'transform .2s, opacity .2s';
-          toast.el.style.transform = null;
-          toast.el.style.opacity = null;
+          toast.el.style.transform = '';
+          toast.el.style.opacity = '';
         }
         Toast._draggedToast = null;
       }
